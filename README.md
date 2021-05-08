@@ -22,8 +22,7 @@ click access to a single encrypted personal directory. I do not want my
 passphrase cached anywhere, and I want an single click way to close off
 access.
 
-See example screenshots at
-https://github.com/bulletmark/gocryptfs-ui/wiki.
+See example screenshots on the [wiki](https://github.com/bulletmark/gocryptfs-ui/wiki).
 
 _This project supercedes my older
 [encfsui](https://github.com/bulletmark/encfsui) project_.
