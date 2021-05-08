@@ -12,7 +12,7 @@
 # General Public License at <http://www.gnu.org/licenses/> for more
 # details.
 
-NAME = $(shell basename $(CURDIR))
+NAME = gocryptfs-ui
 DOC = README.md
 DOCOUT = $(DOC:.md=.html)
 
