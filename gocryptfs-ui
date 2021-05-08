@@ -1,0 +1,156 @@
+#!/bin/bash
+###############################################################################
+# This bash script provides a simple gui around the gocryptfs command line
+# utility to mount and unmount an encrypted directory. This script
+# requires gocryptfs, zenity, and xdg-open. See accompaning README.md.
+#
+# Return code = 0 if no error, else 1.
+#
+# Copyright (C) 2021 Mark Blakeney. This program is distributed under
+# the terms of the GNU General Public License. This program is free
+# software: you can redistribute it and/or modify it under the terms of
+# the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or any later version.
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License at <http://www.gnu.org/licenses/> for more
+# details.
+#
+# See http://github.com/bulletmark/gocryptfs-ui>.
+# This project is based on my older encfsui project, see
+# http://github.com/bulletmark/encfsui>.
+# Mark Blakeney, May 2021.
+###############################################################################
+
+usage() {
+    echo "Usage: $(basename $0) [-options] source_enc_dir target_mount_dir"
+    echo "GUI utility to mount source_enc_dir to target_mount_dir."
+    echo "If target already mounted then it will be unmounted instead."
+    echo "Options:"
+    echo "-i <mins> specify idle timeout mins"
+    echo "-o (don't open target dir in file browser)"
+    exit 1
+}
+
+PROG="gocryptfs"
+
+# Process command line options
+MINS=""
+NOOPEN=0
+while getopts i:o? c; do
+    case $c in
+    i) MINS="-idle ${OPTARG}m";;
+    o) NOOPEN=1;;
+    ?) usage;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [[ $# -ne 2 ]]; then
+    usage
+fi
+
+# Read source and target dirs. Make absolute path.
+src=$(readlink -f $1)
+tgt=$(readlink -f $2)
+
+# Check usage
+if [[ -z $src || -z $tgt  ]]; then
+    usage
+fi
+
+# Function to output message using graphical prompt
+gui() {
+    local title="$1"
+    local type="$2"
+    local text="$3"
+
+    if [[ $type == entry ]]; then
+	args="--hide-text"
+    else
+	args="--ellipsize --"
+    fi
+
+    # Send errors to null to avoid spurious GTK warnings.
+    zenity --$type --title="$title $PROG directory" \
+	--text="$text" --class=Gocryptfs-UI $args 2>/dev/null
+}
+
+if ! type $PROG &>/dev/null; then
+    gui Mount error \
+    "Sorry, $PROG is not installed.\n\nInstall it via your package manager."
+    exit 1
+fi
+
+# Check if this target is already mounted
+if mount | grep -q " on $tgt "; then
+    # Prompt to unmount
+    if ! gui Mount question \
+	"$tgt is already mounted.\n\nDo you want to unmount it?"; then
+	exit 0
+    fi
+
+    # Unmount it
+    res=$(fusermount -u "$tgt" 2>&1)
+
+    # Output an error if the unmount failed
+    if [[ $? -ne 0 ]]; then
+	gui Unmount error "$res"
+	exit 1
+    fi
+
+    # Remove target dir if it is empty
+    rmdir "$tgt" &>/dev/null
+    exit 0
+fi
+
+open-dir-gui() {
+    local dir="$1"
+    xdg-open $dir &>/dev/null &
+}
+
+# Mount the directory. Check first that this is the correct type of filesystem
+if ! $PROG -info "$src" &>/dev/null; then
+    gui Mount error \
+    "$src does not exist or is not an $PROG filesystem.\nCreate it manually with $PROG. E.g. Run the following and answer the prompts:\n\nmkdir -p $src; $PROG -init $src\n\nSee man gocryptfs for more options and details."
+    exit 1
+fi
+
+# Create target dir if it doesn't exist
+mkdir -p "$tgt" &>/dev/null
+
+trap 'rm -rf $tmp' EXIT
+tmp=$(mktemp)
+
+# Loop on user entry for passphrase ..
+mounted=0
+while true; do
+
+    # Get password from user
+    if ! gui Mount entry "Mount $src to $tgt\n\nWhat is the passphrase?" >$tmp; then
+	break
+    fi
+
+    # Give password to $PROG and mount the file system
+    res=$($PROG -passfile $tmp $MINS "$src" "$tgt" 2>&1)
+
+    # Check for error (typically a bad passphrase)
+    if [[ $? -eq 0 ]]; then
+	if [[ $NOOPEN -eq 0 ]]; then
+	    open-dir-gui "$tgt"
+	fi
+
+	mounted=1
+	break
+    fi
+
+    gui Mount error "$res"
+done
+
+if [[ $mounted -eq 0 ]]; then
+    rmdir "$tgt" &>/dev/null
+fi
+
+exit 0

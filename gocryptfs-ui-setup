@@ -1,0 +1,78 @@
+#!/bin/bash
+# User setup script.
+# (C) Mark Blakeney, Aug 2016.
+
+PROG="$(basename $0)"
+NAME=${PROG%-*}
+
+BINDIR="/usr/bin"
+APPDIR="/usr/share/applications"
+ICOBAS="/usr/share/icons/hicolor"
+ICODIR="$ICOBAS/128x128/apps"
+DOCDIR="/usr/share/doc/$NAME"
+
+usage() {
+    echo "Usage:"
+    echo "As root: sudo $PROG install|uninstall"
+    echo "As user: $PROG clean"
+    echo
+    echo "(-d option sets DESTDIR for install/uninstall)"
+    exit 1
+}
+
+# Process command line options
+DESTDIR=""
+while getopts d: c; do
+    case $c in
+    d) DESTDIR="$OPTARG";;
+    \?) usage;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [[ $# -ne 1 ]]; then
+    usage
+fi
+
+cmd="$1"
+
+if [[ $cmd == install || $cmd == uninstall ]]; then
+    DESTDIR="${DESTDIR%%+(/)}"
+    if [[ -z $DESTDIR && $(id -un) != root ]]; then
+	echo "Install or uninstall must be run as sudo/root."
+	exit 1
+    fi
+
+    if [[ $cmd == install ]]; then
+	install -CDv -m 755 -t $DESTDIR$BINDIR $NAME-setup
+	install -CDv -m 755 -t $DESTDIR$BINDIR $NAME
+	install -CDv -m 644 -t $DESTDIR$APPDIR $NAME.desktop
+	install -CDv -m 644 -t $DESTDIR$ICODIR $NAME.png
+	install -CDv -m 644 -t $DESTDIR$DOCDIR README.md
+    else
+	rm -rfv $DESTDIR$BINDIR/$NAME
+	rm -rfv $DESTDIR$APPDIR/$NAME.desktop
+	rm -rfv $DESTDIR$ICODIR/$NAME.png
+	rm -rfv $DESTDIR$DOCDIR
+	rm -rfv $DESTDIR$BINDIR/$NAME-setup
+    fi
+
+    if [[ -z $DESTDIR ]]; then
+	if [[ -x /usr/bin/gtk-update-icon-cache ]]; then
+	    /usr/bin/gtk-update-icon-cache $ICOBAS
+	fi
+	if [[ -x /usr/bin/update-desktop-database ]]; then
+	    /usr/bin/update-desktop-database -q
+	fi
+    fi
+elif [[ $cmd == clean ]]; then
+    if [[ $(id -un) == root ]]; then
+	echo "This command must be run as your own user."
+	exit 1
+    fi
+else
+    usage
+fi
+
+exit 0
