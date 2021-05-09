@@ -13,8 +13,7 @@ DOCDIR="/usr/share/doc/$NAME"
 
 usage() {
     echo "Usage:"
-    echo "As root: sudo $PROG install|uninstall"
-    echo "As user: $PROG clean"
+    echo "sudo $PROG install|uninstall"
     echo
     echo "(-d option sets DESTDIR for install/uninstall)"
     exit 1
@@ -65,11 +64,6 @@ if [[ $cmd == install || $cmd == uninstall ]]; then
 	if [[ -x /usr/bin/update-desktop-database ]]; then
 	    /usr/bin/update-desktop-database -q
 	fi
-    fi
-elif [[ $cmd == clean ]]; then
-    if [[ $(id -un) == root ]]; then
-	echo "This command must be run as your own user."
-	exit 1
     fi
 else
     usage
