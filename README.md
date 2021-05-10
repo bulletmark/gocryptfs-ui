@@ -17,10 +17,13 @@ password and then mounts the
 the launcher when the private directory is already mounted, then you are
 prompted to unmount it. There are some other options, see the usage below.
 
-My motivation for creating this script was to give simple and quick one
-click access to a single encrypted personal directory. I do not want my
-password cached anywhere, and also want a one click way to close off
-access.
+My motivation for creating this script was to provide:
+
+1. One mouse click and password entry to access and open a single
+   encrypted personal directory.
+2. One mouse click to close the directory.
+3. No background application running.
+4. No password cached anywhere.
 
 See example screenshots on the [wiki](https://github.com/bulletmark/gocryptfs-ui/wiki).
 
