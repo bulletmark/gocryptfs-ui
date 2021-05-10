@@ -19,7 +19,7 @@ prompted to unmount it. There are some other options, see the usage below.
 
 My motivation for creating this script was to give simple and quick one
 click access to a single encrypted personal directory. I do not want my
-password cached anywhere, and I want an single click way to close off
+password cached anywhere, and also want a one click way to close off
 access.
 
 See example screenshots on the [wiki](https://github.com/bulletmark/gocryptfs-ui/wiki).
