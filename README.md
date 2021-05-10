@@ -12,14 +12,14 @@ Whenever you want to mount your private directory, you click on the
 desktop launcher. The launcher runs the script with appropriate
 directory arguments. The script uses
 [zenity](https://wiki.gnome.org/Projects/Zenity) to prompt you for the
-passphrase and then mounts the
+password and then mounts the
 [gocryptfs](https://nuetzlich.net/gocryptfs/) directory. If you click on
 the launcher when the private directory is already mounted, then you are
 prompted to unmount it. There are some other options, see the usage below.
 
 My motivation for creating this script was to give simple and quick one
 click access to a single encrypted personal directory. I do not want my
-passphrase cached anywhere, and I want an single click way to close off
+password cached anywhere, and I want an single click way to close off
 access.
 
 See example screenshots on the [wiki](https://github.com/bulletmark/gocryptfs-ui/wiki).
