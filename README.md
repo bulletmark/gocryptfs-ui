@@ -17,7 +17,7 @@ password and then mounts the
 the launcher when the private directory is already mounted, then you are
 prompted to unmount it. There are some other options, see the usage below.
 
-My motivation for creating this script was to provide:
+My motivation for creating this utility is to provide:
 
 1. One mouse click and password entry to access and open a single
    encrypted personal directory.
@@ -27,10 +27,11 @@ My motivation for creating this script was to provide:
 
 See example screenshots on the [wiki](https://github.com/bulletmark/gocryptfs-ui/wiki).
 
-_This project supercedes my older
-[encfsui](https://github.com/bulletmark/encfsui) project_.
 The latest version and documentation is available at
 http://github.com/bulletmark/gocryptfs-ui.
+
+_NOTE: This project supercedes my older
+[encfsui](https://github.com/bulletmark/encfsui) project_.
 
 ### INSTALLATION
 
@@ -49,10 +50,11 @@ The installation procedure creates a desktop application _gocryptfs-ui_
 which you can run from your DE. By default, _gocryptfs-ui_ mounts your
 encrypted `~/.Private` dir to unencrypted `~/Private` with an
 in-activity timeout of 60 minutes. So you should first create an
-[gocryptfs](https://nuetzlich.net/gocryptfs/) `~/.Private` directory.
+[gocryptfs](https://nuetzlich.net/gocryptfs/) `~/.Private` directory, or
+create a link to there from where you keep your encrypted directory.
 See [`man
 gocryptfs`](https://github.com/rfjakob/gocryptfs/blob/master/Documentation/MANPAGE.md)
-for details on how to do this.
+for details on how to create a new encrypted directory.
 
 You can also copy the `/usr/share/applications/gocryptfs-ui.desktop`
 launcher to your own Desktop Launcher in `~/.local/share/applications/`
