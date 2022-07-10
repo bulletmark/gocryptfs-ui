@@ -1,4 +1,5 @@
 ## ENCRYPTED FILESYSTEM [GOCRYPTFS](https://nuetzlich.net/gocryptfs/) GUI WRAPPER
+[![AUR](https://img.shields.io/aur/version/gocryptfs-ui)](https://aur.archlinux.org/packages/gocryptfs-ui/)
 
 [Gocryptfs-ui](https://github.com/bulletmark/gocryptfs-ui) is a bash
 script which provides a simple GUI around the
