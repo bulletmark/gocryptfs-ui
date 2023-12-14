@@ -75,7 +75,7 @@ gui() {
 
     # Send errors to null to avoid spurious GTK warnings.
     zenity --$type --title="$title $PROG directory" \
-	--text="$text" --class=Gocryptfs-UI $args 2>/dev/null
+	--text="$text" $args
 }
 
 if ! type $PROG &>/dev/null; then

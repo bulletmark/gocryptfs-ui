@@ -5,4 +5,3 @@ Name=Gocryptfs-UI
 Exec=/usr/bin/gocryptfs-ui -i60 .Private Private
 Icon=gocryptfs-ui
 Categories=Security;Settings;
-StartupWMClass=Gocryptfs-UI
