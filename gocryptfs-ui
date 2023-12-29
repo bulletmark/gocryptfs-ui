@@ -75,7 +75,7 @@ gui() {
 
     # Send errors to null to avoid spurious GTK warnings.
     zenity --$type --title="$title $PROG directory" \
-	--text="$text" $args
+	--text="$text" --modal $args
 }
 
 if ! type $PROG &>/dev/null; then
