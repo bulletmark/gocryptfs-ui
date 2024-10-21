@@ -24,7 +24,7 @@
 ###############################################################################
 
 usage() {
-    echo "Usage: $(basename $0) [-options] source_enc_dir target_mount_dir"
+    echo "Usage: $(basename "$0") [-options] source_enc_dir target_mount_dir"
     echo "GUI utility to mount source_enc_dir to target_mount_dir."
     echo "If target already mounted then it will be unmounted instead."
     echo "Options:"
@@ -53,8 +53,8 @@ if [[ $# -ne 2 ]]; then
 fi
 
 # Read source and target dirs. Make absolute path.
-src=$(readlink -f $1)
-tgt=$(readlink -f $2)
+src=$(readlink -f "$1")
+tgt=$(readlink -f "$2")
 
 # Check usage
 if [[ -z $src || -z $tgt  ]]; then
@@ -78,7 +78,7 @@ gui() {
 	--text="$text" --modal $args
 }
 
-if ! type $PROG &>/dev/null; then
+if ! type "$PROG" &>/dev/null; then
     gui Mount error \
     "Sorry, $PROG is not installed.\n\nInstall it via your package manager."
     exit 1
@@ -108,11 +108,11 @@ fi
 
 open-dir-gui() {
     local dir="$1"
-    xdg-open $dir &>/dev/null &
+    xdg-open "$dir" &>/dev/null &
 }
 
 # Mount the directory. Check first that this is the correct type of filesystem
-if ! $PROG -info "$src" &>/dev/null; then
+if ! "$PROG" -info "$src" &>/dev/null; then
     gui Mount error \
     "$src does not exist or is not an $PROG filesystem.\nCreate it manually with $PROG. E.g. Run the following and answer the prompts:\n\nmkdir -p $src; $PROG -init $src\n\nSee man gocryptfs for more options and details."
     exit 1
@@ -134,7 +134,7 @@ while true; do
     fi
 
     # Give password to $PROG and mount the file system
-    res=$($PROG -passfile $tmp $MINS "$src" "$tgt" 2>&1)
+    res=$("$PROG" -passfile $tmp $MINS "$src" "$tgt" 2>&1)
 
     # Check for error (typically a bad password)
     if [[ $? -eq 0 ]]; then
