@@ -122,7 +122,7 @@ fi
 mkdir -p "$tgt" &>/dev/null
 
 trap 'rm -f "$tmp"' EXIT
-tmp=$(mktemp)
+tmp="$(mktemp)"
 
 # Loop on user entry for password ..
 mounted=0
