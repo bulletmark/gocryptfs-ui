@@ -121,20 +121,17 @@ fi
 # Create target dir if it doesn't exist
 mkdir -p "$tgt" &>/dev/null
 
-trap 'rm -f "$tmp"' EXIT
-tmp="$(mktemp)"
-
 # Loop on user entry for password ..
 mounted=0
 while true; do
 
     # Get password from user
-    if ! gui Mount entry "Mount $src to $tgt\n\nWhat is the password?" >"$tmp"; then
+    if ! password=$(gui Mount entry "Mount $src to $tgt\n\nWhat is the password?"); then
 	break
     fi
 
     # Give password to $PROG and mount the file system
-    res=$("$PROG" -passfile "$tmp" $MINS "$src" "$tgt" 2>&1)
+    res=$("$PROG" -passfile <(printf "$password") $MINS "$src" "$tgt" 2>&1)
 
     # Check for error (typically a bad password)
     if [[ $? -eq 0 ]]; then
